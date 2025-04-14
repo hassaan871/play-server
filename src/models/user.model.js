@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    descritpion: {
+        type: String
+    },
     avatar: {
         type: String,
         // required: true
@@ -27,6 +30,18 @@ const userSchema = new mongoose.Schema({
     coverImage: {
         type: String
     },
+    videoWatermark: {
+        type: String
+    },
+    contactInfo: {
+        email: { type: String }
+    },
+    links: [
+        {
+            title: { type: String },
+            url: { type: String }
+        }
+    ],
     watchHistory: [
         {
             type: mongoose.Schema.Types.ObjectId,
