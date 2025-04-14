@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
-
     email: {
         type: String,
         required: true,
@@ -16,29 +15,24 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
-
     fullName: {
         type: String,
         required: true,
         trim: true
     },
-
     avatar: {
         type: String,
         // required: true
     },
-
     coverImage: {
         type: String
     },
-
     watchHistory: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Video"
         }
     ],
-
     password: {
         type: String,
         required: [true, "Password is required"]
@@ -48,8 +42,18 @@ const userSchema = new mongoose.Schema({
         requried: true,
         // enum: ['admin', 'user'],
         default: false
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+        required: true,
+    },
+    resetPasswordOTP: {
+        type: String
+    },
+    resetPassOTPExipres: {
+        type: String
     }
-
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

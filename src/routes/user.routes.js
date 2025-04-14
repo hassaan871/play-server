@@ -5,12 +5,17 @@ import upload from "../middleware/multer.middleware.js";
 import UserController from "../controllers/user.controller.js";
 const {
     SignUp,
-    Login
+    Login,
+    ForgetPassword,
+    ResetPassword
 } = UserController
 
-
+// Auth
 routes.post('/signup', SignUp);
 routes.post('/login', Login);
 
+// Password Reset
+routes.post('/forget-password', ForgetPassword);
+routes.post('/reset-password', ResetPassword);
 
 export default routes;
