@@ -63,7 +63,7 @@ const UserController = {
         });
 
         const isValid = await comparePassword(password, user.password);
-        if(!isValid) return(401).json({
+        if(!isValid) return res.status(401).json({
             success: false,
             message: "Invalid Email or Password"
         });
