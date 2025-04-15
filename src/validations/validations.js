@@ -11,10 +11,10 @@ const validateUserData = {
         password: passwordSchema
     }),
 
-    ResetPassowrd: Joi.object({
+    ResetPassword: Joi.object({
         newPassword: passwordSchema
     })
 
 }
 
-export {validateUserData}
+export { validateUserData }
