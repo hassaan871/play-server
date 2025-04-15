@@ -5,6 +5,7 @@ import asyncHandler from "../util/asyncHandler.js";
 import bcryptTasks from "../util/bcrypt.utility.js";
 import { validateUserData } from "../validations/validations.js";
 import sendEmail from "../services/sendEmail.service.js";
+import { uploadOnCloudinary } from "../services/cloudinary.service.js";
 
 const { comparePassword, hashPassword } = bcryptTasks;
 const { generateToken, verifyToken } = tokenServices;
@@ -89,7 +90,7 @@ const UserController = {
         });
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(email)) return res.status(400).json({
+        if (!emailRegex.test(email)) return res.status(400).json({
             success: false,
             message: "Invalid Email"
         });
@@ -97,12 +98,12 @@ const UserController = {
         const resetPasswordOTP = crypto.randomInt(100000, 999999).toString();
         const resetPassOTPExipres = Date.now() + 600000;
 
-        const user = await User.findOneAndUpdate({ email: email}, {
+        const user = await User.findOneAndUpdate({ email: email }, {
             $set: {
                 resetPasswordOTP,
                 resetPassOTPExipres
             }
-        }, { new: true});
+        }, { new: true });
 
         if (!user) return res.status(400).json({
             success: false,
@@ -124,12 +125,12 @@ const UserController = {
 
     ResetPassword: asyncHandler(async (req, res) => {
         const { resetPasswordOTP, newPassword } = req.body;
-        if ( !resetPasswordOTP || !newPassword ) return res.status(400).json({
+        if (!resetPasswordOTP || !newPassword) return res.status(400).json({
             success: false,
             message: "resetPasswordOTP and newPassword both are required"
         });
 
-        const { error } = validateUserData.ResetPassowrd.validate({
+        const { error } = validateUserData.ResetPassword.validate({
             newPassword
         });
 
@@ -150,17 +151,95 @@ const UserController = {
         });
 
         const hashedPassword = await bcryptTasks.hashPassword(newPassword);
-        
+
         user.password = hashedPassword;
         user.resetPasswordOTP = undefined;
-        user.resetPassOTPExipres =  undefined;
-        
+        user.resetPassOTPExipres = undefined;
+
         await user.save();
 
         return res.status(200).json({
             success: true,
             message: "Password updated successfully"
         });
+    }),
+
+    updateUserAvatar: asyncHandler(async (req, res) => {
+        const avatarLocalPath = req.file?.path;
+        if (!avatarLocalPath) return res.status(400).json({
+            success: false,
+            message: "Avatar Image file is missing"
+        });
+
+        const avatar = await uploadOnCloudinary(avatarLocalPath, "image");
+        if (!avatar.url) return res.status(400).json({
+            success: false,
+            message: "Error while updating the avatar"
+        });
+
+        const user = await User.findByIdAndUpdate(
+            req.user?.userId,
+            {
+                $set: { avatar: avatar.url }
+            },
+            { new: true }
+        ).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            message: "Avatar Image updated successfully",
+            user
+        });
+    }),
+
+    updateUserCoverImage: asyncHandler(async (req, res) => {
+        const coverImageLocalPath = req.file?.path;
+        if (!coverImageLocalPath) return res.status(400).json({
+            success: false,
+            message: "Avatar Image file is missing"
+        });
+
+        const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+        if (!coverImage.url) return res.status(400).json({
+            success: false,
+            message: "Error while updating the cover image"
+        });
+
+        const user = await User.findByIdAndUpdate(
+            req.user?.userId,
+            {
+                $set: { coverImage: coverImage.url }
+            },
+            { new: true }
+        ).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            message: "Cover Image updated successfully",
+            user
+        });
+    }),
+
+    //////////////////////////////////////////
+    ////// Poorest API, NOT TESTED YET ///////
+    //////////////////////////////////////////
+    getCurrentUser: asyncHandler(async (req, res) => {
+        const _id = req.user?.userId;
+        const user = await User.findById(_id).select("-password");
+
+        if (!user) return res.status(404).json({
+            success: false,
+            message: "User not found. It might have been deleted."
+        });
+
+        return res.status().json({
+            success: true,
+            user
+        });
+    }),
+
+    updateAccountDetails: asyncHandler(async (req, res) => {
+        
     }),
 }
 
