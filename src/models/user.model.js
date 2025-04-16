@@ -58,6 +58,17 @@ const userSchema = new mongoose.Schema({
         // enum: ['admin', 'user'],
         default: false
     },
+    verificationToken: {
+        type: String
+    },
+    verificationTokenExpires: {
+        type: String
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+        requried: true
+    },
     isDeleted: {
         type: Boolean,
         default: false,
