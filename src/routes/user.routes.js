@@ -6,6 +6,8 @@ import UserController from "../controllers/user.controller.js";
 import auth from "../middleware/auth.middleware.js";
 const {
     SignUp,
+    VerifyEmail,
+    ResendVerificationEmail,
     Login,
     ForgetPassword,
     ResetPassword,
@@ -17,7 +19,9 @@ const {
 
 // Auth
 routes.post('/signup', SignUp);
+routes.get('/verify-email', VerifyEmail);
 routes.post('/login', Login);
+routes.post('/resend-verification', ResendVerificationEmail);
 
 // Password Reset
 routes.post('/forget-password', ForgetPassword);

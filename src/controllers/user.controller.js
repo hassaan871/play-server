@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto, { Verify } from "crypto";
 import User from "../models/user.model.js";
 import tokenServices from "../services/jwt.service.js";
 import asyncHandler from "../util/asyncHandler.js";
@@ -25,30 +25,126 @@ const UserController = {
         });
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({
+        if (existingUser && existingUser.isVerified) return res.status(400).json({
             success: false,
             message: "User Already exists"
         });
 
+        if(existingUser && !existingUser.isVerified) await User.findByIdAndDelete(existingUser._id);
+
         const hashedPassword = await hashPassword(password);
+
+        const verificationToken = crypto.randomInt(100000, 999999).toString();
+        const verificationTokenExipres = Date.now() + 600000;
 
         const newUser = await User.create({
             username,
             email,
             fullName,
-            password: hashedPassword
+            password: hashedPassword,
+            verificationToken,
+            verificationTokenExipres,
+            isVerified: false
         });
 
-        const token = generateToken(newUser);
+        const mail = {
+            to: newUser.email,
+            subject: "Email Verification OTP",
+            text: `Email Verification OTP: ${resetPasswordOTP} \n DON'T SHARE with Anyone`
+        };
+
+        await sendEmail(mail);
+
+        // const token = generateToken(newUser);
 
         const { password: _, ...restData } = newUser.toObject();
-        return res.status(201).header("x-auth-token", token).json({
+        return res.status(201)
+        // .header("x-auth-token", token)
+        .json({
             success: true,
-            message: "User registered successfully",
+            message: "User registered please verify your eamil to activate your account",
             payload: {
                 user: restData,
-                token
+                // token
             }
+        });
+    }),
+
+    VerifyEmail: asyncHandler(async(req, res) => {
+        const {email, verificationToken} = req.body;
+
+        if (!email || !verificationToken) return res.status(400).json({
+            success: false,
+            message: "email and verificationToken both are required"
+        });
+
+        const { error } = validateUserData.EamilVerification.validate({
+            email
+        });
+
+        if (error) return res.status(400).json({
+            success: false,
+            message: "Enter a valid email",
+            error: error.details[0].message
+        });
+
+        const user = await User.findOne({
+            email,
+            verificationToken,
+            verificationTokenExpires: { $gt: Date.now() }
+        }).select("-password");
+
+        if (!user) return res.status(401).json({
+            success: false,
+            message: "Invalid email/Token or Token Expired"
+        });
+
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Email verified successfully. You can now login.",
+            user
+        });
+
+    }),
+
+    ResendVerificationEmail: asyncHandler(async(req, res) => {
+        const { email } = req.body;
+        if(!email) return res.status(400).json({
+            success: false,
+            message: "Email is required"
+        });
+
+        const user = await User.findOne({ email, isVerified: false });
+        if(!user) return res.status(404).json({
+            success: false,
+            message: "User not found or already verified"
+        });
+
+        const verificationToken = crypto.randomInt(100000, 999999).toString();
+        const verificationTokenExipres = Date.now() + 600000;
+
+        user.verificationToken = verificationToken;
+        user.verificationTokenExpires = verificationTokenExipres;
+    
+        await user.save();
+
+        const mail = {
+            to: newUser.email,
+            subject: "Email Verification OTP",
+            text: `Email Verification OTP: ${resetPasswordOTP} \n DON'T SHARE with Anyone`
+        };
+
+        await sendEmail(mail);
+
+        return res.status(200).json({
+            success: true,
+            message: "Verification email sent successfully"
         });
     }),
 
@@ -64,6 +160,11 @@ const UserController = {
             success: false,
             message: "Invalid Email or Password"
         });
+
+        if(!user.isVerified) return res.status(401).json({
+                success: false,
+                message: "Email is not verified."
+            });
 
         const isValid = await comparePassword(password, user.password);
         if (!isValid) return res.status(401).json({
@@ -178,7 +279,7 @@ const UserController = {
         });
 
         const user = await User.findByIdAndUpdate(
-            req.user?.userId,
+            req.user?._id,
             {
                 $set: { avatar: avatar.url }
             },
@@ -206,7 +307,7 @@ const UserController = {
         });
 
         const user = await User.findByIdAndUpdate(
-            req.user?.userId,
+            req.user?._id,
             {
                 $set: { coverImage: coverImage.url }
             },
@@ -224,7 +325,7 @@ const UserController = {
     ////// Poorest API, NOT TESTED YET ///////
     //////////////////////////////////////////
     getCurrentUser: asyncHandler(async (req, res) => {
-        const _id = req.user?.userId;
+        const _id = req.user?._id;
         const user = await User.findById(_id).select("-password");
 
         if (!user) return res.status(404).json({
