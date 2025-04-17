@@ -5,7 +5,7 @@ const isAdmin = async (req, res, next) => {
             message: "Authentication required"
         });
 
-        if(!req.user.isAdmin) return res.status.json({
+        if(!req.user.isAdmin) return res.status(403).json({
             success: false,
             message: "Admin access required. Unauthorized access"
         });
