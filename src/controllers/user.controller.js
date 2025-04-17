@@ -321,9 +321,6 @@ const UserController = {
         });
     }),
 
-    //////////////////////////////////////////
-    ////// Poorest API, NOT TESTED YET ///////
-    //////////////////////////////////////////
     getCurrentUser: asyncHandler(async (req, res) => {
         const _id = req.user?._id;
         const user = await User.findById(_id).select("-password");
@@ -333,14 +330,22 @@ const UserController = {
             message: "User not found. It might have been deleted."
         });
 
-        return res.status().json({
+        return res.status(200).json({
             success: true,
             user
         });
     }),
 
     updateAccountDetails: asyncHandler(async (req, res) => {
-        
+
+        /**
+         * Testing for bugs
+         */
+
+        // return res.status(200).json({
+        //     user: req.user,
+        //     // user1: req.user.user || "req.user.user"
+        // });
     }),
 }
 
