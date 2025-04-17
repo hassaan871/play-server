@@ -22,7 +22,7 @@ const auth = async (req, res, next) => {
             message: "Email not verified. Please verify your email to access this resource."
         });
 
-        req.user = { user };
+        req.user = user;
 
         next();
 
