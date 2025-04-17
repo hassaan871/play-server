@@ -8,7 +8,7 @@ import sendEmail from "../services/sendEmail.service.js";
 import { uploadOnCloudinary } from "../services/cloudinary.service.js";
 
 const { comparePassword, hashPassword } = bcryptTasks;
-const { generateToken, verifyToken } = tokenServices;
+const { generateToken } = tokenServices;
 
 const UserController = {
     SignUp: asyncHandler(async (req, res) => {

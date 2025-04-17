@@ -4,6 +4,7 @@ const routes = express.Router();
 import { uploadImage, uploadVideo } from "../middleware/multer.middleware.js";
 import UserController from "../controllers/user.controller.js";
 import auth from "../middleware/auth.middleware.js";
+
 const {
     SignUp,
     VerifyEmail,
@@ -15,7 +16,7 @@ const {
     updateUserCoverImage,
     getCurrentUser,
     updateAccountDetails
-} = UserController
+} = UserController;
 
 // Auth
 routes.post('/signup', SignUp);
