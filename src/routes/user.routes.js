@@ -15,7 +15,8 @@ const {
     updateUserAvatar,
     updateUserCoverImage,
     getCurrentUser,
-    updateAccountDetails
+    updateAccountDetails,
+    deleteCurrentUser
 } = UserController;
 
 // Auth
@@ -30,9 +31,10 @@ routes.post('/reset-password', ResetPassword);
 
 // protected routes
 routes.patch('/avatar', [auth, uploadImage.single("avatar")], updateUserAvatar);
-routes.patch('/coverimage', [auth, uploadVideo.single("coverImage")], updateUserCoverImage);
+routes.patch('/coverimage', [auth, uploadImage.single("coverImage")], updateUserCoverImage);
 
 routes.get('/current', [auth], getCurrentUser);
 routes.patch('/update', [auth], updateAccountDetails);
+routes.delete('/current', [auth], deleteCurrentUser);
 
 export default routes;

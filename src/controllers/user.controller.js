@@ -1,4 +1,4 @@
-import crypto, { Verify } from "crypto";
+import crypto from "crypto";
 import User from "../models/user.model.js";
 import tokenServices from "../services/jwt.service.js";
 import asyncHandler from "../util/asyncHandler.js";
@@ -25,17 +25,26 @@ const UserController = {
         });
 
         const existingUser = await User.findOne({ email });
+
+        
+        if(existingUser && existingUser.isDeleted) await User.findByIdAndDelete(existingUser._id);
+        
         if (existingUser && existingUser.isVerified) return res.status(400).json({
             success: false,
             message: "User Already exists"
         });
-
+        
         if(existingUser && !existingUser.isVerified) await User.findByIdAndDelete(existingUser._id);
+        
+        // if(existingUser && !existingUser.isDeleted) return res.status(400).json({
+        //     success: false,
+        //     message: "User already registered. Please Login."
+        // });
 
         const hashedPassword = await hashPassword(password);
 
         const verificationToken = crypto.randomInt(100000, 999999).toString();
-        const verificationTokenExipres = Date.now() + 600000;
+        const verificationTokenExpires = new Date(Date.now() + 600000);
 
         const newUser = await User.create({
             username,
@@ -43,14 +52,14 @@ const UserController = {
             fullName,
             password: hashedPassword,
             verificationToken,
-            verificationTokenExipres,
+            verificationTokenExpires,
             isVerified: false
         });
 
         const mail = {
             to: newUser.email,
             subject: "Email Verification OTP",
-            text: `Email Verification OTP: ${resetPasswordOTP} \n DON'T SHARE with Anyone`
+            text: `Email Verification OTP: ${verificationToken} \n DON'T SHARE with Anyone`
         };
 
         await sendEmail(mail);
@@ -62,7 +71,7 @@ const UserController = {
         // .header("x-auth-token", token)
         .json({
             success: true,
-            message: "User registered please verify your eamil to activate your account",
+            message: "User registered please verify your eamil to activate your account. verification email send",
             payload: {
                 user: restData,
                 // token
@@ -86,6 +95,13 @@ const UserController = {
             success: false,
             message: "Enter a valid email",
             error: error.details[0].message
+        });
+
+        const userdb = await User.findOne({ email });
+
+        if(userdb.isVerified) return res.status(400).json({
+            success: false,
+            message: "Email is already verified"
         });
 
         const user = await User.findOne({
@@ -120,14 +136,26 @@ const UserController = {
             message: "Email is required"
         });
 
-        const user = await User.findOne({ email, isVerified: false });
+        const user = await User.findOne(
+            { 
+                email,
+                isVerified: false 
+            }
+        );
+        // console.log("USEr: ", user);
+        
+        // return res.status(200).json({
+        //     success: true,
+        //     message: "my message",
+        //     user: user
+        // });
         if(!user) return res.status(404).json({
             success: false,
             message: "User not found or already verified"
         });
 
         const verificationToken = crypto.randomInt(100000, 999999).toString();
-        const verificationTokenExipres = Date.now() + 600000;
+        const verificationTokenExipres = new Date(Date.now() + 600000);
 
         user.verificationToken = verificationToken;
         user.verificationTokenExpires = verificationTokenExipres;
@@ -135,9 +163,9 @@ const UserController = {
         await user.save();
 
         const mail = {
-            to: newUser.email,
+            to: user.email,
             subject: "Email Verification OTP",
-            text: `Email Verification OTP: ${resetPasswordOTP} \n DON'T SHARE with Anyone`
+            text: `Email Verification OTP: ${verificationToken} \n DON'T SHARE with Anyone`
         };
 
         await sendEmail(mail);
@@ -297,10 +325,10 @@ const UserController = {
         const coverImageLocalPath = req.file?.path;
         if (!coverImageLocalPath) return res.status(400).json({
             success: false,
-            message: "Avatar Image file is missing"
+            message: "Cover Image file is missing"
         });
 
-        const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+        const coverImage = await uploadOnCloudinary(coverImageLocalPath, "image");
         if (!coverImage.url) return res.status(400).json({
             success: false,
             message: "Error while updating the cover image"
@@ -347,6 +375,23 @@ const UserController = {
         //     // user1: req.user.user || "req.user.user"
         // });
     }),
+
+    deleteCurrentUser: asyncHandler(async (req, res) => {
+        const user = await User.findById( req.user?._id );
+
+        if(user.isDeleted) return res.status(400).json({
+            success: false,
+            message: "user is already deleted."
+        });
+
+        user.isDeleted = true;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "User softly deleted successfully"
+        });
+    })
 }
 
 export default UserController;

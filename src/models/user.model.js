@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     verificationTokenExpires: {
-        type: String
+        type: Date
     },
     isVerified: {
         type: Boolean,
@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     resetPassOTPExipres: {
-        type: String
+        type: Date
     }
 }, { timestamps: true });
 
