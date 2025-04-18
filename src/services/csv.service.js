@@ -19,7 +19,7 @@ const generateCSV = async (data, filename) => {
         const json2csvParser = new Parser({ fields });
         const csv = json2csvParser.parse(data);
 
-        const tempCsDir = path.join(process.cwd(), 'temp', 'csv');
+        const tempCsDir = path.join(process.cwd(), 'public', 'temp', 'csv');
         if(!fs.existsSync(tempCsDir)) fs.mkdirSync(tempCsDir, { recursive: true });
 
         const csvFilename = filename || `users_export_${Date.now()}.csv`;
