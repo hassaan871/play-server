@@ -161,7 +161,7 @@ const AdminController = {
 
         if (!users || users.length === 0) return res.status(404).json({
             success: false,
-            message: "No unverified users found"
+            message: "No deleted users found"
         });
 
         const timestamp = Date.now();
