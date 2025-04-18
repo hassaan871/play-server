@@ -22,11 +22,13 @@ const generateCSV = async (data, filename) => {
         const tempCsDir = path.join(process.cwd(), 'temp', 'csv');
         if(!fs.existsSync(tempCsDir)) fs.mkdirSync(tempCsDir, { recursive: true });
 
-        const filePath = path.join(tempCsDir, `${tempCsDir}.csv`);
+        const csvFilename = filename || `users_export_${Date.now()}.csv`;
+        const filePath = path.join(tempCsDir, csvFilename);
+
         fs.writeFileSync(filePath, csv);
 
         const cloudinaryResponse = await uploadOnCloudinary(filePath, "raw");
-        fs.unlinkSync(filePath);
+        // fs.unlinkSync(filePath);
 
         if(!cloudinaryResponse || !cloudinaryResponse.url) throw new Error("Failed to upload CSV to Cloudinary");
 

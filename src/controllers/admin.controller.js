@@ -87,7 +87,7 @@ const AdminController = {
         });
 
         const timestamp = Date.now();
-        const filename = `all_users_${timestamp}`;
+        const filename = `all_users_${timestamp}.csv`;
 
         const csvUrl = await generateCSV(users, filename);
 
@@ -113,7 +113,7 @@ const AdminController = {
         });
 
         const timestamp = Date.now();
-        const filename = `verified_users_${timestamp}`;
+        const filename = `verified_users_${timestamp}.csv`;
 
         const csvUrl = await generateCSV(users, filename);
 
@@ -139,7 +139,7 @@ const AdminController = {
         });
 
         const timestamp = Date.now();
-        const filename = `verified_users_${timestamp}`;
+        const filename = `verified_users_${timestamp}.csv`;
 
         const csvUrl = await generateCSV(users, filename);
 
@@ -165,7 +165,7 @@ const AdminController = {
         });
 
         const timestamp = Date.now();
-        const filename = `verified_users_${timestamp}`;
+        const filename = `verified_users_${timestamp}.csv`;
 
         const csvUrl = await generateCSV(users, filename);
 
