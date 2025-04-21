@@ -22,6 +22,11 @@ const auth = async (req, res, next) => {
             message: "Email not verified. Please verify your email to access this resource."
         });
 
+        if(user.isDeleted) return res.status(404).json({
+            success: false,
+            message: "The user Profile is Deleted. User not found."
+        });
+
         req.user = user;
 
         next();
