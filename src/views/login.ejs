@@ -69,6 +69,25 @@
             background-color: #ddffdd;
             color: #008800;
         }
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -85,7 +104,10 @@
             <div class="form-group">
                 <input id="password" type="password" name="password" placeholder="Password" required />
             </div>
-            <button class="login-button" type="submit">Login</button>
+            <button id="loginBtn" class="login-button" type="submit">
+                <span id="buttonText">Login</span>
+                <div id="buttonLoader" class="loader"></div>
+            </button>
             <div id="message" class="message" style="display: none;"></div>
         </form>
     </div>
@@ -94,12 +116,35 @@
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById("loginForm");
             const messageElement = document.getElementById("message");
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            const loginBtn = document.getElementById('loginBtn');
+
+            function showLoading(){
+                buttonText.style.display = 'none';
+                buttonLoader.style.display = 'inline-block';
+                loginBtn.disabled = true;
+                form.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+
+            function hideLoading(){
+                buttonText.style.display = 'inline-block';
+                buttonLoader.style.display = 'none';
+                loginBtn.disabled = false;
+                form.querySelectorAll('input').forEach(input => {
+                    input.disabled = false;
+                });
+            }
 
             form.addEventListener("submit", async function (event) {
                 event.preventDefault();
 
                 const email = document.getElementById("email").value.trim();
                 const password = document.getElementById("password").value;
+
+                showLoading();
 
                 try {
                     const API_URL = "http://localhost:5000/api/v1/user/login";
@@ -116,9 +161,9 @@
 
                         localStorage.setItem('token', data.token);
 
-                        setTimeout(() => {
+                        // setTimeout(() => {
                             window.location.href = "/view/home";
-                        }, 1000);
+                        // }, 1000);
                     } else {
                         messageElement.textContent = data.message || "Login Failed";
                         messageElement.className = "message error-message";
@@ -133,6 +178,8 @@
                     messageElement.textContent = errorMessage;
                     messageElement.className = "message error-message";
                     messageElement.style.display = "block";
+                } finally {
+                    hideLoading();
                 }
             });
         });
