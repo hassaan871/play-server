@@ -10,7 +10,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #2a2c36;
+            background-color: #404040;
         }
 
         .login-form {
@@ -53,6 +53,8 @@
             background-color: #2a2c39;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
 
 <body>
@@ -61,14 +63,51 @@
         <form class="login-form" action="/login" method="POST">
             <h1 class="login-title">Log In</h1>
             <div class="form-group">
-                <input type="email" name="email" placeholder="Email" required />
+                <input id="email" type="email" name="email" placeholder="Email" required />
             </div>
             <div class="form-group">
-                <input type="password" name="password" placeholder="Password" required />
+                <input id="password" type="password" name="password" placeholder="word" required />
             </div>
             <button class="login-button" type="submit">Login</button>
         </form>
+        <div id="message" class="message" style="display: none;"></div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+            const messageElement = document.getElementById("message");
+
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                try {
+                    const API_URL = "http://localhost:5000/api/v1/user/login";
+                    const response = await axios.post(API_URL, {
+                        email,
+                        password
+                    });
+
+                    const data = response.data;
+                    if(data.success) {
+                        
+                    }else{
+
+                    }
+                } catch (error) {
+                    console.error(error);
+                    // if (error.response && error.response.status === 400) {
+
+                    // }
+                }
+
+            });
+        });
+    </script>
 
 </body>
 
