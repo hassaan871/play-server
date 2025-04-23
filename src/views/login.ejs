@@ -117,7 +117,7 @@
                         localStorage.setItem('token', data.token);
 
                         setTimeout(() => {
-                            window.location.href = "/api/v1/user/home";
+                            window.location.href = "/view/home";
                         }, 1000);
                     } else {
                         messageElement.textContent = data.message || "Login Failed";
