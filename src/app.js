@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/routes.js";
-import viewsRoutes from "./routes/views.routes.js";
+import clientRoutes from "./routes/client.routes.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 
@@ -22,6 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use('/api', routes);
-app.use('/view', viewsRoutes);
+app.use('/view', clientRoutes);
 
 export { app }
