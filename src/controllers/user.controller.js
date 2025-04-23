@@ -203,11 +203,20 @@ const UserController = {
         const token = generateToken(user);
         const { password: _, ...userData } = user.toObject();
 
-        return res.status(200).json({
+        return res.status(200).cookie("token", token).json({
             success: true,
             message: "Logged in Successfully",
             user: userData,
             token
+        });
+    }),
+
+    Logout: asyncHandler(async (req, res) => {
+        res.clearCookie('token');
+
+        return res.status(200).json({
+            success: true,
+            message: "Logges out successfully"
         });
     }),
 

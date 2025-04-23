@@ -3,7 +3,7 @@ import tokenServices from "../services/jwt.service.js";
 
 const auth = async (req, res, next) => {
     try {
-        const token = req.header("x-auth-token");
+        const token = req.header("x-auth-token") || req.cookies.token;
         if (!token) return res.status(401).json({
             success: false,
             messsage: "Access denied. No token provided"
