@@ -34,7 +34,7 @@ const auth = async (req, res, next) => {
     } catch (error) {
         return res.status(401).json({
             success: false,
-            messsage: "Auth error, authentication Failed!!!",
+            message: "Auth error, authentication Failed!!!",
             error
         });
     }
