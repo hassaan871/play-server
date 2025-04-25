@@ -6,6 +6,7 @@ import isAdmin from "../middleware/admin.middleware.js";
 import AdminController from "../controllers/admin.controller.js";
 
 const {
+    adminLogin,
     getAllUsers,
     getUnverifiedUsers,
     getVerifiedUsers,
@@ -18,6 +19,8 @@ const {
 
 // Apply auth and admin middleware to all routes
 routes.use([auth, isAdmin]);
+
+routes.post('/login', adminLogin);
 
 routes.get('/users/all', getAllUsers);
 routes.get('/users/verified', getVerifiedUsers);

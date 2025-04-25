@@ -203,7 +203,7 @@ const UserController = {
         const token = generateToken(user);
         const { password: _, ...userData } = user.toObject();
 
-        return res.status(200).cookie("token", token).json({
+        return res.status(200).cookie("token", token).header("x-auth-token", token).json({
             success: true,
             message: "Logged in Successfully",
             user: userData,

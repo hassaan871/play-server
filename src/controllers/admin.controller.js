@@ -1,8 +1,53 @@
 import User from "../models/user.model.js";
 import asyncHandler from "../util/asyncHandler.js";
 import generateCSV from "../services/csv.service.js";
+import bcryptTasks from "../util/bcrypt.utility.js";
+import tokenServices from "../services/jwt.service.js";
+
+const { comparePassword } = bcryptTasks;
+const { generateToken } = tokenServices;
 
 const AdminController = {
+    adminLogin: asyncHandler(async (req, res) => {
+        const {email, password} = req.body;
+        if(!email || !password) return res.status(400).json({
+            success: false,
+            message: "Both email and Password are required"
+        });
+
+        const user = await User.findOne({ email });
+        if(!user) return res.status(401).json({
+            success: false,
+            message: "Invalid Email or Password"
+        });
+
+        if(!user.isVerified) return res.status(401).json({
+            success: false,
+            message: "Invalid Eamil or Password"
+        });
+
+        const isValid = await comparePassword(password, user.password);
+        if(!isValid) return res.status(401).json({
+            success: false,
+            message: "Invalid email or Password"
+        });
+
+        if(!user.isAdmin) return res.status(401).json({
+            success: false,
+            message: "User is NOT Admin"
+        });
+
+        const token = generateToken(user);
+        const {password: _, ...userData} = user.toObject();
+
+        return res.status(200).cookie("token", token).header("x-auth-token", token).json({
+            success: true,
+            message: "Logged in Successfully",
+            user: userData,
+            token
+        });
+    }),
+
     getAllUsers: asyncHandler(async (req, res) => {
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 3;
