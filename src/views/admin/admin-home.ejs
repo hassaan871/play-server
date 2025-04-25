@@ -2,8 +2,35 @@
 <html lang="en">
 <head>
     <title>Admin Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <h1>Admin, Welcome to Home Page</h1>
+    <h1>Admin Welcome to Home Page</h1>
+    <button id="logout-button">Logout</button>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.getElementById("logout-button");
+
+        logoutBtn.addEventListener("click", async function() {
+            try {
+                const API_URL = "http://localhost:5000/api/v1/admin/logout";
+                const response = await axios.post(API_URL, {});
+
+                const data = response.data;
+                if(data.success) {
+                    localStorage.clear();
+                    window.location.href = "/view/admin-login";
+                }else{
+                    console.error("Log out Attempt failed");
+                    
+                }
+            } catch (error) {
+                console.error("Logout failed: ", error);
+                               
+            }   
+        });
+
+    });
+</script>
 </html>
