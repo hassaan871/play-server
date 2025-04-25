@@ -216,7 +216,7 @@ const UserController = {
 
         return res.status(200).json({
             success: true,
-            message: "Logges out successfully"
+            message: "Loged out successfully"
         });
     }),
 

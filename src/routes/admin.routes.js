@@ -7,6 +7,7 @@ import AdminController from "../controllers/admin.controller.js";
 
 const {
     adminLogin,
+    Logout,
     getAllUsers,
     getUnverifiedUsers,
     getVerifiedUsers,
@@ -18,6 +19,7 @@ const {
 } = AdminController;
 
 routes.post('/login', adminLogin);
+routes.post('/logout', Logout);
 
 // Apply auth and admin middleware to all routes
 routes.use([auth, isAdmin]);

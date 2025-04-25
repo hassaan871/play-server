@@ -48,6 +48,15 @@ const AdminController = {
         });
     }),
 
+    Logout: asyncHandler(async (req, res) => {
+        res.clearCookie('token');
+    
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully"
+        });
+    }),
+
     getAllUsers: asyncHandler(async (req, res) => {
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 3;
