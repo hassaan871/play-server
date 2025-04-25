@@ -109,7 +109,7 @@
 
     <div class="login-container">
         <form id="loginForm" class="login-form">
-            <h1 class="login-title">Log In</h1>
+            <h1 class="login-title">Admin Log In</h1>
             <div class="form-group">
                 <input id="email" type="email" name="email" placeholder="Email" required />
             </div>
@@ -121,7 +121,7 @@
                 <div id="buttonLoader" class="loader"></div>
             </button>
             <div class="text-container">
-                <div class="text">I'm not a member!<a href="/view/signup">Sign Up</a></div>
+                <div class="text">I'm not a Admin! <a href="/view/signup">Sign Up as User</a></div>
             </div>
             <div id="message" class="message" style="display: none;"></div>
         </form>
@@ -162,7 +162,7 @@
                 showLoading();
 
                 try {
-                    const API_URL = "http://localhost:5000/api/v1/user/login";
+                    const API_URL = "http://localhost:5000/api/v1/admin/login";
                     const response = await axios.post(API_URL, {
                         email,
                         password
@@ -177,7 +177,7 @@
                         localStorage.setItem('token', data.token);
 
                         // setTimeout(() => {
-                            window.location.href = "/view/home";
+                            window.location.href = "/view/admin-home";
                         // }, 1000);
                     } else {
                         messageElement.textContent = data.message || "Login Failed";

@@ -10,19 +10,19 @@ const auth = async (req, res, next) => {
         });
 
         const decoded = tokenServices.verifyToken(token);
-        
+
         const user = await User.findById(decoded.id).select("-password");
-        if(!user) return res.status(401).json({
+        if (!user) return res.status(401).json({
             success: false,
-            message: "Invalid token. User not found" 
+            message: "Invalid token. User not found"
         });
 
-        if(!user.isVerified) return res.status(403).json({
+        if (!user.isVerified) return res.status(403).json({
             success: false,
             message: "Email not verified. Please verify your email to access this resource."
         });
 
-        if(user.isDeleted) return res.status(404).json({
+        if (user.isDeleted) return res.status(404).json({
             success: false,
             message: "The user Profile is Deleted. User not found."
         });

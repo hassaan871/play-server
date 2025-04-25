@@ -4,7 +4,7 @@ import tokenServices from "../services/jwt.service.js";
 const clientAuth = async (req, res, next) => {
     try {
         const token = req.cookies.token;
-        if(!token) {
+        if (!token) {
             console.log("No token found in cookies. Redirecting to login... ");
             return res.redirect("/view/login");
         }
@@ -16,14 +16,15 @@ const clientAuth = async (req, res, next) => {
             return res.redirect("/view/login");
         }
         const user = await User.findById(decoded.id).select("-password");
-        if(!user || user.isDeleted) {
+        if (!user || user.isDeleted) {
             console.log("User not found or account deleted. Redirecting to login... ");
             return res.redirect("/view/login");
         }
-        if(!user.isVerified) {
+        if (!user.isVerified) {
             console.log("User email not verified. Redirecting to verificaiton page... ");
             return res.redirect("/view/verify-email");
         }
+        
         req.user = user;
         next();
     } catch (error) {

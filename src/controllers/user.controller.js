@@ -26,16 +26,16 @@ const UserController = {
 
         const existingUser = await User.findOne({ email });
 
-        
-        if(existingUser && existingUser.isDeleted) await User.findByIdAndDelete(existingUser._id);
-        
+
+        if (existingUser && existingUser.isDeleted) await User.findByIdAndDelete(existingUser._id);
+
         if (existingUser && existingUser.isVerified) return res.status(400).json({
             success: false,
             message: "User Already exists"
         });
-        
-        if(existingUser && !existingUser.isVerified) await User.findByIdAndDelete(existingUser._id);
-        
+
+        if (existingUser && !existingUser.isVerified) await User.findByIdAndDelete(existingUser._id);
+
         // if(existingUser && !existingUser.isDeleted) return res.status(400).json({
         //     success: false,
         //     message: "User already registered. Please Login."
@@ -68,19 +68,19 @@ const UserController = {
 
         const { password: _, ...restData } = newUser.toObject();
         return res.status(201)
-        // .header("x-auth-token", token)
-        .json({
-            success: true,
-            message: "User registered please verify your eamil to activate your account. verification email send",
-            payload: {
-                user: restData,
-                // token
-            }
-        });
+            // .header("x-auth-token", token)
+            .json({
+                success: true,
+                message: "User registered please verify your eamil to activate your account. verification email send",
+                payload: {
+                    user: restData,
+                    // token
+                }
+            });
     }),
 
-    VerifyEmail: asyncHandler(async(req, res) => {
-        const {email, verificationToken} = req.body;
+    VerifyEmail: asyncHandler(async (req, res) => {
+        const { email, verificationToken } = req.body;
 
         if (!email || !verificationToken) return res.status(400).json({
             success: false,
@@ -99,7 +99,7 @@ const UserController = {
 
         const userdb = await User.findOne({ email });
 
-        if(userdb.isVerified) return res.status(400).json({
+        if (userdb.isVerified) return res.status(400).json({
             success: false,
             message: "Email is already verified"
         });
@@ -129,27 +129,27 @@ const UserController = {
 
     }),
 
-    ResendVerificationEmail: asyncHandler(async(req, res) => {
+    ResendVerificationEmail: asyncHandler(async (req, res) => {
         const { email } = req.body;
-        if(!email) return res.status(400).json({
+        if (!email) return res.status(400).json({
             success: false,
             message: "Email is required"
         });
 
         const user = await User.findOne(
-            { 
+            {
                 email,
-                isVerified: false 
+                isVerified: false
             }
         );
         // console.log("USEr: ", user);
-        
+
         // return res.status(200).json({
         //     success: true,
         //     message: "my message",
         //     user: user
         // });
-        if(!user) return res.status(404).json({
+        if (!user) return res.status(404).json({
             success: false,
             message: "User not found or already verified"
         });
@@ -159,7 +159,7 @@ const UserController = {
 
         user.verificationToken = verificationToken;
         user.verificationTokenExpires = verificationTokenExipres;
-    
+
         await user.save();
 
         const mail = {
@@ -189,10 +189,10 @@ const UserController = {
             message: "Invalid Email or Password"
         });
 
-        if(!user.isVerified) return res.status(401).json({
-                success: false,
-                message: "Email is not verified."
-            });
+        if (!user.isVerified) return res.status(401).json({
+            success: false,
+            message: "Email is not verified."
+        });
 
         const isValid = await comparePassword(password, user.password);
         if (!isValid) return res.status(401).json({
@@ -386,9 +386,9 @@ const UserController = {
     }),
 
     deleteCurrentUser: asyncHandler(async (req, res) => {
-        const user = await User.findById( req.user?._id );
+        const user = await User.findById(req.user?._id);
 
-        if(user.isDeleted) return res.status(400).json({
+        if (user.isDeleted) return res.status(400).json({
             success: false,
             message: "user is already deleted."
         });
