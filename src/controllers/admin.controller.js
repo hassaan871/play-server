@@ -21,9 +21,9 @@ const AdminController = {
             message: "Invalid Email or Password"
         });
 
-        if(!user.isVerified) return res.status(401).json({
+        if(!user.isVerified) return res.status(403).json({
             success: false,
-            message: "Invalid Eamil or Password"
+            message: "Invalid Email or Password"
         });
 
         const isValid = await comparePassword(password, user.password);
@@ -32,7 +32,7 @@ const AdminController = {
             message: "Invalid email or Password"
         });
 
-        if(!user.isAdmin) return res.status(401).json({
+        if(!user.isAdmin) return res.status(403).json({
             success: false,
             message: "User is NOT Admin"
         });

@@ -17,10 +17,10 @@ const {
     getAllDeletedUsersCsv
 } = AdminController;
 
+routes.post('/login', adminLogin);
+
 // Apply auth and admin middleware to all routes
 routes.use([auth, isAdmin]);
-
-routes.post('/login', adminLogin);
 
 routes.get('/users/all', getAllUsers);
 routes.get('/users/verified', getVerifiedUsers);
