@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Admin Home</title>
-    <link rel="stylesheet" href="/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #3498db;
@@ -16,21 +17,32 @@
             --text: #333;
             --border: #ddd;
         }
-
-        body {
-            /* background-color: #D4C9BE; */
-            color: #030303;
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
+        body {
+            /* background-color: #f9f9f9; */
+            background-image: url("/images/wallpaper.jpg");
+            color: var(--text);
+        }
+        
         .navbar {
             display: flex;
-            height: 10vh;
-            width: 100%;
             justify-content: space-between;
+            align-items: center;
             background-color: #000000;
             padding: 0.8rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
         }
-
+        
         .logo {
             color: white;
             font-size: 1.5rem;
@@ -38,16 +50,17 @@
             display: flex;
             align-items: center;
         }
-
+        
         .nav-links {
             display: flex;
             list-style: none;
+            margin: 0;
         }
-
+        
         .nav-links li {
             margin: 0 1rem;
         }
-
+        
         .nav-links a {
             color: white;
             text-decoration: none;
@@ -55,36 +68,32 @@
             padding: 0.5rem;
             transition: all 0.3s ease;
         }
-
-        ul {
-            margin-top: 10px;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
+        
+        .nav-links a:hover, .nav-links a.active {
             color: #F1EFEC;
             border-bottom: 2px solid #F1EFEC;
         }
-
+        
         .logout button {
             color: red;
             background-color: #000000;
-            border: 3px solid red;
-            padding: 10px;
+            border: 2px solid red;
+            padding: 8px 16px;
             border-radius: 20px;
-            margin-top: 5px;
             cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-
+        
         .logout button:hover {
             background-color: rgb(35, 1, 1);
         }
-
+        
         .container {
             margin-top: 80px;
             padding: 20px;
         }
-
+        
         .dashboard-header {
             display: flex;
             justify-content: space-between;
@@ -93,31 +102,24 @@
             padding: 15px;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .display-title {
-            font-size: 18.rem;
+        
+        .dashboard-title {
+            font-size: 1.8rem;
             color: var(--dark);
         }
-
-        .search-box input {
-            padding: 8px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            width: 250px;
-        }
-
+        
         .filter-container {
             display: flex;
             margin-bottom: 20px;
             background: white;
             padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             flex-wrap: wrap;
         }
-
+        
         .filter-btn {
             margin-right: 10px;
             padding: 8px 16px;
@@ -128,12 +130,12 @@
             transition: all 0.3s ease;
             font-weight: 500;
         }
-
-        .filer-btn.active {
+        
+        .filter-btn.active {
             background-color: var(--primary);
             color: white;
         }
-
+        
         .export-btn {
             padding: 8px 16px;
             border: none;
@@ -145,50 +147,226 @@
             display: flex;
             align-items: center;
         }
-
+        
         .export-btn i {
             margin-right: 5px;
         }
-
+        
         .export-btn:hover {
             background-color: #27ae60;
         }
-
-        .user-table-container {
+        
+        .users-table-container {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             overflow: hidden;
             margin-bottom: 20px;
         }
-
-        .user-table {
+        
+        .users-table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        .user-table th,
-        .user-table td {
+        
+        .users-table th, .users-table td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
-
-        .user-table th {
+        
+        .users-table th {
             background-color: #f8f9fa;
             font-weight: 600;
             color: var(--dark);
         }
-
-        .user-table tr:hover {
+        
+        .users-table tr:hover {
             background-color: #f8f9fa;
         }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .verification-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .verified {
+            background-color: #e6f7ee;
+            color: #2ecc71;
+        }
+        
+        .unverified {
+            background-color: #fdf2e9;
+            color: #e67e22;
+        }
+        
+        .deleted {
+            background-color: #fce8e6;
+            color: #e74c3c;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .view-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .edit-btn {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination-btn {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid var(--border);
+            background-color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .pagination-btn:hover:not(.active) {
+            background-color: #f1f1f1;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+        
+        .error {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: var(--danger);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            font-size: 1.2rem;
+            color: #888;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .filter-container {
+                flex-direction: column;
+            }
+            
+            .filter-btn {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 0.5rem;
+            }
+            
+            .nav-links {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-links li {
+                margin: 5px;
+            }
+            
+            .container {
+                margin-top: 140px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .dashboard-title {
+                margin-bottom: 10px;
+            }
+            
+            .users-table th, .users-table td {
+                padding: 8px;
+            }
+            
+            .action-column {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                margin-bottom: 5px;
+                margin-right: 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .users-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-
 <body>
-    <!-- navbar start-->
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
             PLAY
@@ -201,44 +379,39 @@
             <li><a href="#" class="active">Users</a></li>
             <li><a href="#">Settings</a></li>
         </ul>
-        <div class="items">
-
-            <div class="right-section">
-                <div class="logout">
-                    <button id="logout-button">Logout</button>
-                </div>
+        
+        <div class="right-section">
+            <div class="logout">
+                <button id="logout-button">Logout</button>
             </div>
         </div>
     </nav>
-    <!-- navbar end -->
 
-    <!-- Main Container start-->
+    <!-- Main Container -->
     <div class="container">
-        <!-- Dashboard header start -->
+        <!-- Dashboard Header -->
         <div class="dashboard-header">
-            <h1 class="dashboard-title"> User Management</h1>
+            <h1 class="dashboard-title">User Management</h1>
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search users...">
+                <input type="text" id="search-input" placeholder="Search users..." style="padding: 8px; border-radius: 20px; border: 1px solid #ddd; width: 250px;">
             </div>
         </div>
-        <!-- Dashboard header end -->
 
-        <!-- Filter Section Start -->
+        <!-- Filter Section -->
         <div class="filter-container">
             <button class="filter-btn active" data-filter="all">All Users</button>
             <button class="filter-btn" data-filter="verified">Verified Users</button>
             <button class="filter-btn" data-filter="unverified">Unverified Users</button>
             <button class="filter-btn" data-filter="deleted">Deleted Users</button>
-
-            <button class="epxort-btn" id="epxort-csv">
+            
+            <button class="export-btn" id="export-csv">
                 <i class="fas fa-download"></i> Export CSV
             </button>
         </div>
-        <!-- Filter Section End -->
 
-        <!-- User Table Start -->
-        <div class="user-table-container">
-            <table class="user-table">
+        <!-- Users Table -->
+        <div class="users-table-container">
+            <table class="users-table">
                 <thead>
                     <tr>
                         <th>User</th>
@@ -249,253 +422,388 @@
                     </tr>
                 </thead>
                 <tbody id="users-table-body">
+                    <!-- Will be populated by JavaScript -->
                     <tr>
                         <td colspan="5" class="loading">Loading users...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <!-- User Table End -->
 
-        <!-- Pagination Start -->
-        <div class="pagination">
-            <!-- Will be populated by Javascript -->
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Will be populated by JavaScript -->
         </div>
-        <!-- Pagination End -->
     </div>
-    <!-- Main Container end-->
 
-</body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-        let currentPage = 1;
-        let currentFilter = 'all';
-        const limit = 5;
-        const apiBaseUrl = 'http://localhost:5000/api/v1/admin';
-        let users = [];
-        let filteredUsers = [];
-
-        const tableBody = document.getElementById('users-table-body');
-        const pagination = document.getElementById('pagination');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const exportButton = document.getElementById('export-csv');
-        const searchInput = document.getElementById('search-input');
-        const logoutBtn = document.getElementById("logout-button");
-
-
-        async function fetchUsers(filter, page) {
-            try {
-                // show loading state
-                tableBody.innerHTML = '<tr><td colspan="5" class="loading">Loading users... </td></tr>';
-
-                // Determine API endpoint based on filter
-                let endpoint;
-                switch (filter) {
-                    case 'verified':
-                        endpoint = `${apiBaseUrl}/users/verified?page=${page}&limit=${limit}`;
-                        break;
-                    case 'unverified':
-                        endpoint = `${apiBaseUrl}/users/unverified?page=${page}&limit=${limit}`;
-                        break;
-                    case 'deleted':
-                        endpoint = `${apiBaseUrl}/users/deleted?page=${page}&limit=${limit}`;
-                        break;
-                    default:
-                        endpoint = `${apiBaseUrl}/users/all?page=${page}&limit=${limit}`;
-                }
-
-                const response = await fetch(endpoint, {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Tpe': 'application/json'
-                    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            let currentPage = 1;
+            let currentFilter = 'all';
+            const limit = 5; // Users per page
+            const apiBaseUrl = 'http://localhost:5000/api/v1/admin';
+            let users = [];
+            let filteredUsers = [];
+            
+            // DOM Elements
+            const tableBody = document.getElementById('users-table-body');
+            const pagination = document.getElementById('pagination');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const exportButton = document.getElementById('export-csv');
+            const searchInput = document.getElementById('search-input');
+            const logoutBtn = document.getElementById('logout-button');
+            
+            // Initialize
+            fetchUsers(currentFilter, currentPage);
+            
+            // Event Listeners
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update filter and fetch users
+                    currentFilter = this.dataset.filter;
+                    currentPage = 1;
+                    fetchUsers(currentFilter, currentPage);
                 });
-
-                // if (!response.success) {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
+            });
+            
+            exportButton.addEventListener('click', function() {
+                exportCSV(currentFilter);
+            });
+            
+            searchInput.addEventListener('input', function() {
+                filterUsersBySearch(this.value);
+            });
+            
+            logoutBtn.addEventListener('click', async function() {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/logout`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        localStorage.clear();
+                        window.location.href = '/view/admin-login';
+                    } else {
+                        console.error('Logout attempt failed');
+                    }
+                } catch (error) {
+                    console.error('Logout failed: ', error);
                 }
-
-                const data = await response.json();
-
-                if (!data || data.length === 0) {
+            });
+            
+            // Functions
+            async function fetchUsers(filter, page) {
+                try {
+                    // Show loading state
+                    tableBody.innerHTML = '<tr><td colspan="5" class="loading">Loading users...</td></tr>';
+                    
+                    // Determine API endpoint based on filter
+                    let endpoint;
+                    switch (filter) {
+                        case 'verified':
+                            endpoint = `${apiBaseUrl}/users/verified?page=${page}&limit=${limit}`;
+                            break;
+                        case 'unverified':
+                            endpoint = `${apiBaseUrl}/users/unverified?page=${page}&limit=${limit}`;
+                            break;
+                        case 'deleted':
+                            endpoint = `${apiBaseUrl}/users/deleted?page=${page}&limit=${limit}`;
+                            break;
+                        default:
+                            endpoint = `${apiBaseUrl}/users/all?page=${page}&limit=${limit}`;
+                    }
+                    
+                    // Fetch data
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch users');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Handle empty response
+                    if (!data || data.length === 0) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <i class="fas fa-users-slash"></i>
+                                    <p>No users found</p>
+                                </td>
+                            </tr>
+                        `;
+                        pagination.innerHTML = '';
+                        return;
+                    }
+                    
+                    // Store users data
+                    users = data;
+                    filteredUsers = [...users];
+                    
+                    // Render users
+                    renderUsers(filteredUsers);
+                    renderPagination(filteredUsers.length);
+                    
+                } catch (error) {
+                    console.error('Error fetching users:', error);
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="5" class="empty-state">
-                                <i class="fas fa-users-slash"></i>
-                                <p>No users found</p>
+                            <td colspan="5" class="error">
+                                Error loading users: ${error.message}
                             </td>
                         </tr>
                     `;
-                    pagination.innerHTML = '';
+                }
+            }
+            
+            function renderUsers(usersData) {
+                // Clear table
+                tableBody.innerHTML = '';
+                
+                if (usersData.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <p>No users match your search</p>
+                            </td>
+                        </tr>
+                    `;
                     return;
                 }
-                users = data;
-                filteredUsers = [...users];
-
-                renderUsers(filteredUsers);
-                renderPagination(filteredUsers.length);
-
-            } catch (error) {
-                console.error('Error fetching users: ', error);
-                tableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="error">
-                        Error loading users: ${error.message}
-                    </td>
-                </tr>`;
-            }
-        }
-
-        function renderUsers(usersData) {
-            //clear the table
-            tableBody.innerHTML = '';
-
-            if (usersData.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state">
-                            <i class="fas fa-search"></i>
-                            <p>No users match your search</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            usersData.forEach(user => {
-                const row = document.createElement('tr');
-                const formattedDate = joinDate.toLocalDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-
-                let statusClass = 'unverified';
-                let statusText = 'Unverified';
-
-                if (user.isVerified && !user.isDelete) {
-                    statusClass = 'verified';
-                    statusText = 'Verified';
-                } else if (user.isDeleted) {
-                    statusClass = 'deleted';
-                    statusText = 'Deleted';
-                }
-
-                row.innerHTML = `
-                    <td>
-                        <div style="display: flex; align-items: center;">
-                            <img src="/api/placeholder/40/40" alt="Avatar" class="user-avatar">
-                            <div style="margin-left: 10px;">
-                                <div style = "font-weight: 500;">${user.username || 'N/A'}</div>
-                                <div style = "font-weight: 0.8rem; color:#777;">${user._id}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${user.email}</td>
-                    <td><span class="verification-badge ${statusClass}">${statusText}</span></td>
-                    <td>${formattedDate}</td>
-                    <td class="action-column">
-                        <button class= "action-btn view-btn">View</button>
-                        <button class= "action-btn edit-btn">Edit</button>
-                        ${!user.isDeleted ?
-                            `<button class="action-btn delete-btn">Delete</button>` :
-                            `<button class= "action-btn edit-btn" style="background-color: #27ae60;">Restore</button>`
+                
+                // Add users to table
+                usersData.forEach(user => {
+                    const row = document.createElement('tr');
+                    
+                    // Format date
+                    const joinDate = new Date(user.createdAt);
+                    const formattedDate = joinDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    // Determine status class
+                    let statusClass = 'unverified';
+                    let statusText = 'Unverified';
+                    
+                    if (user.isVerified && !user.isDeleted) {
+                        statusClass = 'verified';
+                        statusText = 'Verified';
+                    } else if (user.isDeleted) {
+                        statusClass = 'deleted';
+                        statusText = 'Deleted';
                     }
-                    </td>
-                `;
-
-                tableBody.appendChild(row);
-
-                document.querySelectorAll('.view-btn').forEach((btn, index) => {
-                    btn.addEventListener('click', () => viewUser(usersData[index])); 
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                <img src="/api/placeholder/40/40" alt="Avatar" class="user-avatar">
+                                <div style="margin-left: 10px;">
+                                    <div style="font-weight: 500;">${user.username || 'N/A'}</div>
+                                    <div style="font-size: 0.8rem; color: #777;">${user._id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="verification-badge ${statusClass}">${statusText}</span></td>
+                        <td>${formattedDate}</td>
+                        <td class="action-column">
+                            <button class="action-btn view-btn">View</button>
+                            <button class="action-btn edit-btn">Edit</button>
+                            ${!user.isDeleted ? 
+                                `<button class="action-btn delete-btn">Delete</button>` : 
+                                `<button class="action-btn delete-btn" style="background-color: #27ae60;">Restore</button>`
+                            }
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
                 });
-
+                
+                // Add event listeners to action buttons
+                document.querySelectorAll('.view-btn').forEach((btn, index) => {
+                    btn.addEventListener('click', () => viewUser(usersData[index]));
+                });
+                
                 document.querySelectorAll('.edit-btn').forEach((btn, index) => {
                     btn.addEventListener('click', () => editUser(usersData[index]));
                 });
-
+                
                 document.querySelectorAll('.delete-btn').forEach((btn, index) => {
                     btn.addEventListener('click', () => {
-                        if(usersData[index].isDeleted) {
+                        if (usersData[index].isDeleted) {
                             restoreUser(usersData[index]);
-                        }else{
+                        } else {
                             deleteUser(usersData[index]);
                         }
                     });
                 });
-            });
-        }
-
-        function renderPagination(totalUsers) {
-            // calculate total pages
-            const totalPages = Math.ceil(totalUsers/limit);
-
-            // Clear pagination
-            pagination.innerHTML = '';
-
-            //Don't show pagination if there is only one page
-            if(totalPages <= 1) return;
-
-            //Previous button
-            const prevButton = document.createElement('button');
-            prevButton.className = 'pagination-btn';
-            prevButton.innerHTML = '&laquo';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    fetchUsers(currentFilter, currentPage);
-                }
-            });
-            pagination.appendChild(prevButton);
-
-            for (let i = 1; i<= totalPages; i++){
-                const pageButton = document.createElement('button');
-                pageButton.className = `pagination-btn ${i === currentPage ? 'active': ''}`;
-                pageButton.textContent = i;
-                pageButton.addEventListener('click', () => {
-                    currentPage = i;
-                    fetchUsers(currentFilter, currentPage);
-                });
-                pagination.appendChild(pageButton);
             }
-
-            const nextButton = document.createElement("button");
-            nextButtonn.className = 'pagination-btn';
-            nextButton.innerHTML = '&raquo';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
+            
+            function renderPagination(totalUsers) {
+                // Calculate total pages
+                const totalPages = Math.ceil(totalUsers / limit);
+                
+                // Clear pagination
+                pagination.innerHTML = '';
+                
+                // Don't show pagination if there's only one page
+                if (totalPages <= 1) return;
+                
+                // Previous button
+                const prevButton = document.createElement('button');
+                prevButton.className = 'pagination-btn';
+                prevButton.innerHTML = '&laquo;';
+                prevButton.disabled = currentPage === 1;
+                prevButton.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        fetchUsers(currentFilter, currentPage);
+                    }
+                });
+                pagination.appendChild(prevButton);
+                
+                // Page buttons
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement('button');
+                    pageButton.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                    pageButton.textContent = i;
+                    pageButton.addEventListener('click', () => {
+                        currentPage = i;
+                        fetchUsers(currentFilter, currentPage);
+                    });
+                    pagination.appendChild(pageButton);
+                }
+                
+                // Next button
+                const nextButton = document.createElement('button');
+                nextButton.className = 'pagination-btn';
+                nextButton.innerHTML = '&raquo;';
+                nextButton.disabled = currentPage === totalPages;
+                nextButton.addEventListener('click', () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        fetchUsers(currentFilter, currentPage);
+                    }
+                });
+                pagination.appendChild(nextButton);
+            }
+            
+            async function exportCSV(filter) {
+                try {
+                    // Determine API endpoint based on filter
+                    let endpoint;
+                    switch (filter) {
+                        case 'verified':
+                            endpoint = `${apiBaseUrl}/users/csv/verified`;
+                            break;
+                        case 'unverified':
+                            endpoint = `${apiBaseUrl}/users/csv/unverified`;
+                            break;
+                        case 'deleted':
+                            endpoint = `${apiBaseUrl}/users/csv/deleted`;
+                            break;
+                        default:
+                            endpoint = `${apiBaseUrl}/users/csv/all`;
+                    }
+                    
+                    // Fetch CSV data
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to generate CSV');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.csvUrl) {
+                        // Create a temporary link and trigger download
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = data.csvUrl;
+                        downloadLink.download = data.csvUrl.split('/').pop();
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                        
+                        alert(`CSV exported successfully with ${data.count} users`);
+                    } else {
+                        throw new Error('Invalid CSV response');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error exporting CSV:', error);
+                    alert(`Error exporting CSV: ${error.message}`);
+                }
+            }
+            
+            function filterUsersBySearch(searchTerm) {
+                if (!searchTerm) {
+                    filteredUsers = [...users];
+                } else {
+                    const term = searchTerm.toLowerCase();
+                    filteredUsers = users.filter(user => {
+                        return (
+                            (user.username && user.username.toLowerCase().includes(term)) ||
+                            (user.email && user.email.toLowerCase().includes(term)) ||
+                            (user._id && user._id.toLowerCase().includes(term))
+                        );
+                    });
+                }
+                
+                renderUsers(filteredUsers);
+                renderPagination(filteredUsers.length);
+            }
+            
+            // User action functions (these would be connected to your API in a real implementation)
+            function viewUser(user) {
+                alert(`View User: ${user.username || user.email}\nID: ${user._id}`);
+                // In a real implementation, you might open a modal or navigate to a user details page
+            }
+            
+            function editUser(user) {
+                alert(`Edit User: ${user.username || user.email}\nID: ${user._id}`);
+                // In a real implementation, you might open a modal with a form to edit user details
+            }
+            
+            function deleteUser(user) {
+                if (confirm(`Are you sure you want to delete user ${user.username || user.email}?`)) {
+                    alert(`User ${user.username || user.email} would be deleted here.`);
+                    // In a real implementation, you would call your API to delete the user
+                    // After successful deletion, you would refresh the user list
                     fetchUsers(currentFilter, currentPage);
                 }
-            });
-            pagination.appendChild(nextButton);
-
-        }
-        logoutBtn.addEventListener("click", async function () {
-            try {
-                const API_URL = "http://localhost:5000/api/v1/admin/logout";
-                const response = await axios.post(API_URL, {});
-
-                const data = response.data;
-                if (data.success) {
-                    localStorage.clear();
-                    window.location.href = "/view/admin-login";
-                } else {
-                    console.error("Log out Attempt failed");
-
+            }
+            
+            function restoreUser(user) {
+                if (confirm(`Are you sure you want to restore user ${user.username || user.email}?`)) {
+                    alert(`User ${user.username || user.email} would be restored here.`);
+                    // In a real implementation, you would call your API to restore the user
+                    // After successful restoration, you would refresh the user list
+                    fetchUsers(currentFilter, currentPage);
                 }
-            } catch (error) {
-                console.error("Logout failed: ", error);
-
             }
         });
-
-    });
-</script>
-
+    </script>
+</body>
 </html>
