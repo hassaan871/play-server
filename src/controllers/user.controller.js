@@ -99,6 +99,11 @@ const UserController = {
 
         const userdb = await User.findOne({ email });
 
+        if(!userdb) return res.status(404).json({
+            success: false,
+            message: "Invalid Email, or Email not Registered"
+        });
+
         if (userdb.isVerified) return res.status(400).json({
             success: false,
             message: "Email is already verified"
