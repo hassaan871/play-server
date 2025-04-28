@@ -11,5 +11,6 @@ routes.get('/admin-users', [clientAuth, clientAdminAuth], (req, res) => res.rend
 routes.get('/login', (req, res) => res.render('login'));
 routes.get('/signup', (req, res) => res.render('signup'));
 routes.get('/home', [clientAuth], (req, res) => res.render('home'));
+routes.get('/verify-email', (req, res) => res.render('verifyEmail'));
 
 export default routes;

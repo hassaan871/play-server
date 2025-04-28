@@ -22,7 +22,7 @@ const {
 
 // Auth
 routes.post('/signup', SignUp);
-routes.get('/verify-email', VerifyEmail);
+routes.post('/verify-email', VerifyEmail);
 routes.post('/login', Login);
 routes.post('/resend-verification', ResendVerificationEmail);
 routes.post('/logout', Logout);

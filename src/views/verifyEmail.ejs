@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Verify Email</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url("/images/wallpaper.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .login-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #000000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #f2f2f2;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            color: #000000;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .login-button:hover {
+            background-color: #2a2c39;
+        }
+
+        .text{
+            padding: 0 15px;
+            color: #909090;
+            font-size: 14px;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .error-message {
+            background-color: #ffdddd;
+            color: #ff0000;
+        }
+
+        .success-message {
+            background-color: #ddffdd;
+            color: #008800;
+        }
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="login-container">
+        <form id="loginForm" class="login-form">
+            <h1 class="login-title">Verify Email</h1>
+            <div class="form-group">
+                <input id="email" type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+                <input id="verificationToken" name="verificationToken" placeholder="Verification Token" required />
+            </div>
+            <button id="loginBtn" class="login-button" type="submit">
+                <span id="buttonText">Verify Email</span>
+                <div id="buttonLoader" class="loader"></div>
+            </button>
+            <div class="text-container">
+                <div class="text">I'm not a member!<a href="/view/signup">Sign Up</a></div>
+                <div class="text">Resend Verification Token! <a href="/view/signup">Resend</a></div>
+            </div>
+            <div id="message" class="message" style="display: none;"></div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById("loginForm");
+            const messageElement = document.getElementById("message");
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            const loginBtn = document.getElementById('loginBtn');
+
+            function showLoading(){
+                buttonText.style.display = 'none';
+                buttonLoader.style.display = 'inline-block';
+                loginBtn.disabled = true;
+                form.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+
+            function hideLoading(){
+                buttonText.style.display = 'inline-block';
+                buttonLoader.style.display = 'none';
+                loginBtn.disabled = false;
+                form.querySelectorAll('input').forEach(input => {
+                    input.disabled = false;
+                });
+            }
+
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const email = document.getElementById("email").value.trim();
+                const verificationToken = document.getElementById("verificationToken").value;
+
+                showLoading();
+
+                try {
+                    const API_URL = "http://localhost:5000/api/v1/user/verify-email";
+                    const response = await axios.post(API_URL, {
+                        email,
+                        verificationToken
+                    });
+
+                    const data = response.data;
+                    if (data.success) {
+                        messageElement.textContent = "Your email has been verified. Redirecting you to the login page";
+                        messageElement.className = "message success-message";
+                        messageElement.style.display = "block";
+
+                        // localStorage.setItem('token', data.token);
+
+                        setTimeout(() => {
+                            window.location.href = "/view/home";
+                        }, 5000);
+                    } else {
+                        messageElement.textContent = data.message || "Email Verification Failed";
+                        messageElement.className = "message error-message";
+                        messageElement.style.display = "block";
+                    }
+                } catch (error) {
+                    console.error(error);
+                    let errorMessage = "Verification failed. Please try again.";
+                    if (error.response) {
+                        errorMessage = error.response.data.message || errorMessage;
+                    }
+                    messageElement.textContent = errorMessage;
+                    messageElement.className = "message error-message";
+                    messageElement.style.display = "block";
+                } finally {
+                    hideLoading();
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
