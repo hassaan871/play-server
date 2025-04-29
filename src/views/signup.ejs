@@ -326,6 +326,10 @@
                         messageElement.textContent = data.message;
                         messageElement.classList.add('message-success');
                         messageElement.classList.remove('message-error');
+
+                        setTimeout(() => {
+                            window.location.href = "/view/verify-email";
+                        }, 5000);
                     } else {
                         messageElement.textContent = "Signup Failed: " + data.message;
                         messageElement.classList.add('message-error');
